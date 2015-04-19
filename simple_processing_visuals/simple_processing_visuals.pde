@@ -1,6 +1,6 @@
 import beads.*;
 import org.jaudiolibs.beads.*;
-/*
+
 String sF = "test.mp3";
 SamplePlayer sp;
 AudioContext ac;
@@ -54,7 +54,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "goldfish.wav";
+    sF = sketchPath("") + "werk.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
@@ -86,8 +86,8 @@ void setup()
   ps.addListener(sd);
   beatDetector = new PeakDetector();
   sd.addListener(beatDetector);
-  beatDetector.setThreshold(0.2f);
-  beatDetector.setAlpha(.9f);
+  beatDetector.setThreshold(0.7f);
+  beatDetector.setAlpha(.2f);
   beatDetector.addMessageListener
   (
     new Bead()
@@ -127,28 +127,23 @@ void processBackground()
 
 void draw()
 {
-  background(0,100);
   frame++;
-  //processBackground();
-  //colorWash.add(new Color((int)random(255),(int)random(250),(int)random(250))); //simulating muse data for now
-  
-  //Write to the graphics buffer
-
+  background(255*brightness);
+  //slow down the data so people have a chance to view it
   if(frame % 10 == 0)
   {
      //update the current color
     current_muse = new Color((int)random(255),(int)random(250),(int)random(250));
   }
 
+  //Draw the background muse filling color data
   pg.beginDraw();
   pg.stroke(current_muse.r, current_muse.g, current_muse.b);
   pg.noFill();
   pg.ellipse(width/2,height/2,frame,frame);
   pg.endDraw();
-  image(pg, 0, 0);
   
-  //println(colorWash.size());
-  stroke(color(255, 255, 255));
+  //Draw the rythmn balls
   float[] features = ps.getFeatures();
   if(features != null)
   {
@@ -162,17 +157,22 @@ void draw()
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        //pg.fill(255,255,255);
-        pg.ellipse(ball.getx(), ball.gety(), rad, rad);
+        balls_buffer.fill(255-frame%50,frame%60,0,75); //fully transparent
+        balls_buffer.ellipse(ball.getx(), ball.gety(), rad, rad);
     }
     balls_buffer.endDraw();
+    
+    
+    //tint(255, 255);
     image(balls_buffer, 0, 0);
+    //blendMode(DIFFERENCE);
+    //image(pg, 0, 0);
     //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,SCREEN); 
   }
-
-  int dt = millis() - time;
-  brightness -= (dt * 0.01);
-  if (brightness < 0) brightness = 0;
-  time += dt;
+  brightness = 0;
+  //int dt = millis() - time;
+  //brightness -= (dt * 0.01);
+  //if (brightness < 0) brightness = 0;
+  //time += dt;
 }
-*/
+
