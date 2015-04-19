@@ -85,7 +85,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "horses.wav";
+    sF = sketchPath("") + "werk.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
