@@ -2,6 +2,7 @@ from liblo import *
 import sys
 import time
 import signal
+import numpy as np
 
 to_visualizer_file = "src/simple_processing_visuals/data.txt"
 portnum = 5001
@@ -45,17 +46,28 @@ class MuseServer(ServerThread):
         else:
             self.num_updates += 1
 
-    def  update_waves(self,d,t,a,b,g):
+    # all of the updates
+    def update_delta(self,wave):
         if self.num_updates == update_limit:
-            self.delta = d
-            self.theta = t
-            self.alpha = a
-            self.beta = b
-            self.gamma = g
-        else:
-            self.num_updates += 1
+            self.delta = wave
 
+    def update_theta(self,wave):
+        if self.num_updates == update_limit:
+            self.theta = wave
 
+    def update_alpha(self,wave):
+        if self.num_updates == update_limit:
+            self.alpha = wave
+
+    def update_beta(self,wave):
+        if self.num_updates == update_limit:
+            self.beta = wave
+
+    def update_gamma(self,wave):
+        if self.num_updates == update_limit:
+            self.gamma = wave
+
+    # string getter functions
     def string_acc(self):
         return str(self.acc_x) + ',' + str(self.acc_y) + ',' + str(self.acc_z)
 
@@ -71,11 +83,37 @@ class MuseServer(ServerThread):
         self.update_acc(acc_x, acc_y, acc_z)
     
     #receive wave data from muse magic black box from EEG
-    @make_method('/muse/elements', 'fffff')
-    def waves_callback(self, path, args):
-        d,t,a,b,g = args
-        print "%s %f %f %f %f %f\n" % (path, d,t,a,b,g)
-        self.update_waves(d,t,a,b,g)
+    # documentation was pretty sparse, don't know why reports 4 values, 2nd of which is nan
+    @make_method('/muse/elements/delta_relative', 'ffff')
+    def delta_callback(self, path, args):
+        wave, w2, w3, w4 = args
+        avg = np.mean([wave,w3,w4])
+        #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
+        self.update_delta(wave)
+    @make_method('/muse/elements/theta_relative', 'ffff')
+    def theta_callback(self, path, args):
+        wave, w2, w3, w4  = args
+        avg = np.mean([wave,w3,w4])
+        #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
+        self.update_theta(wave)
+    @make_method('/muse/elements/alpha_relative', 'ffff')
+    def alpha_callback(self, path, args):
+        wave, w2, w3, w4  = args
+        avg = np.mean([wave,w3,w4])
+        #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
+        self.update_alpha(wave)
+    @make_method('/muse/elements/beta_relative', 'ffff')
+    def beta_callback(self, path, args):
+        wave, w2, w3, w4  = args
+        avg = np.mean([wave,w3,w4])
+        #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
+        self.update_beta(wave)
+    @make_method('/muse/elements/gamma_relative', 'ffff')
+    def gamma_callback(self, path, args):
+        wave, w2, w3, w4  = args
+        avg = np.mean([wave,w3,w4])
+        #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
+        self.update_gamma(wave)
     
 
     #handle unexpected messages

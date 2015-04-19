@@ -82,7 +82,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "horses.wav";
+    sF = sketchPath("") + "werk.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
@@ -222,18 +222,68 @@ void draw()
          cAccX = startAccX;
          cAccY = startAccY;
          cAccZ = startAccZ;
-         startDelta = startDelta;
-         startTheta = startTheta;
-         startAlpha = startAlpha;
-         startBeta = startBeta;
-         startGamma = startGamma;
+         cDelta = startDelta;
+         cTheta = startTheta;
+         cAlpha = startAlpha;
+         cBeta = startBeta;
+         cGamma = startGamma;
        }
     }
     println("accx " + cAccX + " accy is " + cAccY);
     println("muse_data is " + muse_data);
   }
 
-  current_muse = new Color(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255));
+  //current_muse = new Color(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255));
+  //Compute mood color based on brain waves
+
+  float[] waves_sorted = {cDelta, cTheta, cAlpha, cBeta, cGamma};
+  sort(waves_sorted);
+  float max = waves_sorted[4];
+  float penulmax = waves_sorted[3];
+  println("max is " + max);
+
+    if(cAlpha == max)
+    {
+      if(cDelta == penulmax)
+        current_muse = MELLOW;// MELLOW
+      else if(cTheta == penulmax)
+        current_muse = CALM;// CALM
+      else if(cBeta == penulmax)
+        current_muse = CONTENT;
+      else if(cGamma == penulmax)
+        current_muse = CREATIVE;
+    }
+    else if(cBeta == max)
+    {
+      if(cDelta == penulmax)
+        current_muse = ANGRY;
+      else if(cTheta == penulmax)
+        current_muse = ANGRY;
+      else if(cAlpha == penulmax)
+        current_muse = FRUSTRATED;
+      else if(cGamma == penulmax)
+        current_muse = STRESSED;
+    }
+    else if(cGamma == max)
+    {
+      if(cDelta == penulmax)
+        current_muse = UNCERTAIN;
+      else if(cTheta == penulmax)
+        current_muse = UNCERTAIN;
+      else if(cAlpha == penulmax)
+        current_muse = LOVE;
+      else if(cBeta == penulmax)
+        current_muse = DEVILISH;
+    }
+    else // ur basically asleep or something weird. black.
+    {
+      current_muse = new Color(255,255,255);
+      // TIRED (or sleeping) // black
+      // if this happens, ur like dead or somethin
+      
+    }
+
+
 
   //Draw the background muse filling color data
   pg.beginDraw();
