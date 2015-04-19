@@ -63,3 +63,7 @@ target/
 
 #datafile
 data
+
+#music files
+*.wav
+*.mp3

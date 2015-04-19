@@ -3,9 +3,9 @@ import sys
 import time
 import signal
 
-to_visualizer_file = "data"
+to_visualizer_file = "src/simple_processing_visuals/data.txt"
 portnum = 5001
-update_limit = 25  # number of times callback is called before
+update_limit = 5  # number of times callback is called before
                     # actually updating and returning any info
 sleep_time = .25 #change to write faster
 running = 1
@@ -103,7 +103,7 @@ if __name__ == "__main__":
         if server.num_updates == update_limit:
             print "writing\n"
             f_vis = open(to_visualizer_file, 'w')
-            f_vis.write(server.string_acc() + ',' + server.string_eeg())
+            f_vis.write(server.string_acc() + ',' + server.string_eeg() + '\n')
             server.reset_num_updates()
             f_vis.close()
 

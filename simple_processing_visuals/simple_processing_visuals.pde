@@ -1,6 +1,9 @@
 import beads.*;
 import org.jaudiolibs.beads.*;
 
+import beads.*;
+import org.jaudiolibs.beads.*;
+
 String sF = "test.mp3";
 SamplePlayer sp;
 AudioContext ac;
