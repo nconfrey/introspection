@@ -170,7 +170,7 @@ void draw()
     {
        String[] pieces = split(muse_data[0], ',');
        cAccX = float(pieces[0])-600;
-       cAccY = float(pieces[1])-500 ;
+       cAccY = float(pieces[1])-700;
        cAccZ = float(pieces[2]) / 3;
        cL_ear = float(pieces[3]) / 3;
        cL_forehead = float(pieces[4]) / 3;
@@ -193,6 +193,8 @@ void draw()
   if(features != null)
   {
     balls_buffer.beginDraw();
+    balls_buffer.fill(0,0,0,56); //slowly fade out old balls
+    balls_buffer.rect(0,0,width,height);
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
