@@ -222,7 +222,7 @@ void draw()
   pg.beginDraw();
   pg.stroke(current_muse.r, current_muse.g, current_muse.b);
   pg.noFill();
-  pg.ellipse(width/2,height/2,frame,frame);
+  pg.ellipse((width/2)+cAccX,(height/2) + cAccY,frame/2,frame/2);
   pg.endDraw();
   
   //Draw the rythmn balls
@@ -244,7 +244,7 @@ void draw()
         balls_buffer.noStroke();
         //balls_buffer.fill(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75); //fully transparent
         balls_buffer.fill(255);
-        balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
+        balls_buffer.ellipse(ball.getx(), ball.gety(), rad, rad);
     }
     balls_buffer.endDraw();
     
