@@ -42,10 +42,10 @@ public class Color{
     this.r = r;
     this.g = g;
     this.b = b;
+   }
     
    public void addGrad(){r++;g++;b++;}
    public void subGrad(){r--;g--;b--;}
-   }
 }
 //COLOR CONSTANTS FOR MOODS
 Color MELLOW = new Color(227,255,13);
@@ -53,7 +53,7 @@ Color CALM = new Color(86,238,254);
 Color LOVE = new Color(255,49,31);
 Color UNCERTAIN = new Color(219,0,219);
 Color FRUSTRATED = new Color(255,165,56);
-Color DEVILISH = new Color(138,0,247);
+Color ANXIOUS = new Color(138,0,247);
 Color STRESSED = new Color(70,232,0);
 Color ANGRY = new Color(230,0,0);
 Color TIRED = new Color(238,204,115);
@@ -240,7 +240,7 @@ void draw()
   //Compute mood color based on brain waves
 
   float[] waves_sorted = {cDelta, cTheta, cAlpha, cBeta, cGamma};
-  sort(waves_sorted);
+  waves_sorted = sort(waves_sorted);
   float max = waves_sorted[4];
   float penulmax = waves_sorted[3];
   println("max is " + max);
@@ -276,7 +276,7 @@ void draw()
       else if(cAlpha == penulmax)
         current_muse = LOVE;
       else if(cBeta == penulmax)
-        current_muse = DEVILISH;
+        current_muse = ANXIOUS;
     }
     else // ur basically asleep or something weird. black.
     {
