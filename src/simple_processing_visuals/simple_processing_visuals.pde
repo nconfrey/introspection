@@ -222,7 +222,7 @@ void draw()
   pg.beginDraw();
   pg.stroke(current_muse.r, current_muse.g, current_muse.b);
   pg.noFill();
-  pg.ellipse((width/2)+cAccX,(height/2) + cAccY,frame/2,frame/2);
+  pg.ellipse((width/2),(height/2),frame,frame);
   pg.endDraw();
   
   //Draw the rythmn balls
@@ -230,7 +230,7 @@ void draw()
   if(features != null)
   {
     balls_buffer.beginDraw();
-    balls_buffer.fill(0,0,0,4.5); //slowly fade out old balls
+    balls_buffer.fill(104,104,104); //slowly fade out old balls
     balls_buffer.background(0);
     for(int i = 0; i < ballList.size(); i++)
     {
