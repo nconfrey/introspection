@@ -3,6 +3,7 @@ public class Ball
   private int xPos;
   private int yPos; 
   private int rad;
+  private int prev_rad = 1;
   public Ball(int x, int y, int r)
    {
       xPos = x;
@@ -26,12 +27,14 @@ public int getx(){return xPos;}
 public int gety(){return yPos;}
 public int getRad(){return rad;}
 public void setRad(int r){rad = r;}
+public int getPrevRad(){return prev_rad;}
 public float getxSpeed(){return xspeed;}
 public float getySpeed(){return yspeed;}
 public int getxDirection(){return xdirection;}
 public int getyDirection(){return ydirection;}
 public void updateXpos(){xPos += ( xspeed * xdirection );}
 public void updateYpos(){yPos += ( yspeed * ydirection );}
+public void setPrevRad(int r){prev_rad = r;}
 public void stopMotion(){xspeed = 0; yspeed = 0;}
 public void go(){xspeed = ORIGIONAL_xspeed; yspeed = ORIGIONAL_yspeed;}
 public void reverseMotion(){xdirection *= -1; ydirection *= -1;}
