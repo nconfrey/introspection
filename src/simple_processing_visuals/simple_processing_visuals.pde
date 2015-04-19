@@ -49,7 +49,7 @@ int frame = 0; //used to keep track of numbers of draw loops
 void setup()
 {
   
-  size(displayWidth, displayHeight);
+  size(displayWidth, displayHeight, P3D);
   frameRate(30);
   pg = createGraphics(width, height);
   balls_buffer = createGraphics(width, height);
@@ -167,11 +167,7 @@ void draw()
   frame++;
   background(255*brightness);
   //slow down the data so people have a chance to view it
-  if(frame % 10 == 0)
-  {
-     //update the current color
-    current_muse = new Color((int)random(255),(int)random(250),(int)random(250));
-  }
+  
   //values provided from the muse - zeroed out just in case
   float cAccX = 0;
   float cAccY = 0;
@@ -220,6 +216,8 @@ void draw()
     println("muse_data is " + muse_data);
   }
 
+  current_muse = new Color(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75);
+
   //Draw the background muse filling color data
   pg.beginDraw();
   pg.stroke(current_muse.r, current_muse.g, current_muse.b);
@@ -233,7 +231,7 @@ void draw()
   {
     balls_buffer.beginDraw();
     balls_buffer.fill(0,0,0,4.5); //slowly fade out old balls
-    balls_buffer.rect(-width, -height,(2*width),(2*height));
+    balls_buffer.background(0);
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
@@ -244,14 +242,17 @@ void draw()
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
         balls_buffer.noStroke();
-        balls_buffer.fill(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75); //fully transparent
+        //balls_buffer.fill(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75); //fully transparent
+        balls_buffer.fill(255);
         balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
     }
     balls_buffer.endDraw();
     
-    
+    PImage pi = pg.get();
+    pi.mask(balls_buffer);
+    image(pi, 0, 0);
     //tint(255, 255);
-    image(balls_buffer, 0, 0);
+    //image(balls_buffer, 0, 0);
     //blendMode(DIFFERENCE);
     //image(pg, 0, 0);
     //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,SCREEN); 
