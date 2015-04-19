@@ -2,7 +2,6 @@ from liblo import *
 import sys
 import time
 import signal
-import numpy as np
 
 to_visualizer_file = "src/simple_processing_visuals/data.txt"
 portnum = 5001
@@ -87,33 +86,43 @@ class MuseServer(ServerThread):
     @make_method('/muse/elements/delta_relative', 'ffff')
     def delta_callback(self, path, args):
         wave, w2, w3, w4 = args
-        avg = np.mean([wave,w3,w4])
+        waves = [wave, w2, w3, w4]
+        for w in waves:
+            if(w == w): #i.e. if w is indeed a number
+                self.update_delta(w)
         #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
-        self.update_delta(wave)
     @make_method('/muse/elements/theta_relative', 'ffff')
     def theta_callback(self, path, args):
         wave, w2, w3, w4  = args
-        avg = np.mean([wave,w3,w4])
+        waves = [wave, w2, w3, w4]
+        for w in waves:
+            if(w == w):
+                self.update_theta(w)
         #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
-        self.update_theta(wave)
     @make_method('/muse/elements/alpha_relative', 'ffff')
     def alpha_callback(self, path, args):
         wave, w2, w3, w4  = args
-        avg = np.mean([wave,w3,w4])
+        waves = [wave, w2, w3, w4]
+        for w in waves:
+            if(w == w):
+                self.update_alpha(w)
         #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
-        self.update_alpha(wave)
     @make_method('/muse/elements/beta_relative', 'ffff')
     def beta_callback(self, path, args):
         wave, w2, w3, w4  = args
-        avg = np.mean([wave,w3,w4])
+        waves = [wave, w2, w3, w4]
+        for w in waves:
+            if(w == w):
+                self.update_beta(w)
         #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
-        self.update_beta(wave)
     @make_method('/muse/elements/gamma_relative', 'ffff')
     def gamma_callback(self, path, args):
         wave, w2, w3, w4  = args
-        avg = np.mean([wave,w3,w4])
+        waves = [wave, w2, w3, w4]
+        for w in waves:
+            if(w == w):
+                self.update_gamma(w)
         #print "%s %f %f %f %f\n" % (path, wave, w2, w3, w4)
-        self.update_gamma(wave)
     
 
     #handle unexpected messages
@@ -138,8 +147,6 @@ except ServerError, err:
 server.start()
 
 if __name__ == "__main__":
-    #f_vis = open(to_visualizer_file, 'w')
-
     while running:
         #signal.signal(signal.SIGINT, signal_handler)
         time.sleep(sleep_time)
@@ -152,5 +159,4 @@ if __name__ == "__main__":
 
         #TODO: need an interrupt so that we can quit from the server and close the file
 
-    #close(f_vis)
     sys.exit(0)
