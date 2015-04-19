@@ -14,3 +14,9 @@ provided you have homebrew and pip, install for step 2 goes like:
 $ brew install liblo
 $ pip install cython
 $ pip install pyliblo
+
+Step4: Visuals
+Processing https://processing.org/
+
+Step5: Beads audio library
+Take from introspection/src and copy into your Processing Library folder (found by opening processing and hitting preferences)
