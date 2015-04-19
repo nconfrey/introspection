@@ -35,7 +35,6 @@ float startAlpha = 0;
 float startBeta = 0;
 float startGamma = 0;
 
-
 public class Color{
    public float r, g, b;
    public Color(float r, float g, float b){
@@ -43,29 +42,14 @@ public class Color{
     this.g = g;
     this.b = b;
    }
-    
-   public void addGrad(){r+=3;g+=3;b+=3;}
-   public void subGrad(){r-=3;g-=3;b-=3;}
 }
-//COLOR CONSTANTS FOR MOODS
-Color MELLOW = new Color(227,255,13);
-Color CALM = new Color(86,238,254);
-Color LOVE = new Color(255,49,31);
-Color UNCERTAIN = new Color(219,0,219);
-Color FRUSTRATED = new Color(255,165,56);
-Color ANXIOUS = new Color(138,0,247);
-Color STRESSED = new Color(70,232,0);
-Color ANGRY = new Color(230,0,0);
-Color TIRED = new Color(238,204,115);
-Color CONTENT = new Color(255,229,63);
-Color CREATIVE = new Color(0,204,51);
 
 int frame = 0; //used to keep track of numbers of draw loops
 
 void setup()
 {
   
-  size(displayWidth, displayHeight, P3D);
+  size(displayWidth, displayHeight);
   frameRate(30);
   pg = createGraphics(width, height);
   balls_buffer = createGraphics(width, height);
@@ -85,8 +69,8 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "werk.wav";
-    sp = new SamplePlayer(ac, new Sample(sF));
+     sF = sketchPath("") + "werk.wav";
+     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
   {
@@ -98,7 +82,6 @@ void setup()
   g = new Gain(ac, 1, gainValue);
   g.addInput(sp);
   ac.out.addInput(g);
-  
   
   ShortFrameSegmenter sfs = new ShortFrameSegmenter(ac);
   sfs.addInput(ac.out);
@@ -131,7 +114,14 @@ void setup()
   );
   ac.out.addDependent(sfs); // list the frame segmenter as a dependent, so that the AudioContext knows when to update it  
   
-    try
+  /*
+  //Now prep the data from the muse
+  reader = createReader(sketchPath("") + "data.txt");
+  if(reader == null)
+    MUSE_OKAY = false;
+  */
+  
+  try
     {
       muse_data = loadStrings("data.txt");//reader.readLine();  
     }
@@ -177,8 +167,6 @@ void processBackground()
   //return ret;
 }
 
-//==========================================Draw Loop=======================================
-
 void draw()
 {
   frame++;
@@ -189,7 +177,6 @@ void draw()
      //update the current color
     current_muse = new Color((int)random(255),(int)random(250),(int)random(250));
   }
-  
   //values provided from the muse - zeroed out just in case
   float cAccX = 0;
   float cAccY = 0;
@@ -219,11 +206,11 @@ void draw()
          cAccX = float(pieces[0]) - startAccX;
          cAccY = float(pieces[1]) - startAccY;
          cAccZ = float(pieces[2]) - startAccZ;
-         cDelta = float(pieces[3]) - startDelta;
-         cTheta = float(pieces[4]) - startTheta;
-         cAlpha = float(pieces[5]) - startAlpha;
-         cBeta = float(pieces[6]) - startBeta;
-         cGamma = float(pieces[7]) - startGamma;
+         cDelta = float(pieces[3]);
+         cTheta = float(pieces[4]);
+         cAlpha = float(pieces[5]);
+         cBeta = float(pieces[6]);
+         cGamma = float(pieces[7]);
        }
        catch(Exception e)
        {
@@ -236,69 +223,9 @@ void draw()
          cBeta = startBeta;
          cGamma = startGamma;
        }
-    }
     println("accx " + cAccX + " accy is " + cAccY);
     println("muse_data is " + muse_data);
   }
-
-
-  //current_muse = new Color(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255));
-  //Compute mood color based on brain waves
-
-  float[] waves_sorted = {cDelta, cTheta, cAlpha, cBeta, cGamma};
-  waves_sorted = sort(waves_sorted);
-  float max = waves_sorted[4];
-  float penulmax = waves_sorted[3];
-  println("max is " + max);
-
-    if(cAlpha == max)
-    {
-      if(cDelta == penulmax)
-        current_muse = MELLOW;// MELLOW
-      else if(cTheta == penulmax)
-        current_muse = CALM;// CALM
-      else if(cBeta == penulmax)
-        current_muse = CONTENT;
-      else if(cGamma == penulmax)
-        current_muse = CREATIVE;
-    }
-    else if(cBeta == max)
-    {
-      if(cDelta == penulmax)
-        current_muse = ANGRY;
-      else if(cTheta == penulmax)
-        current_muse = ANGRY;
-      else if(cAlpha == penulmax)
-        current_muse = FRUSTRATED;
-      else if(cGamma == penulmax)
-        current_muse = STRESSED;
-    }
-    else if(cGamma == max)
-    {
-      if(cDelta == penulmax)
-        current_muse = UNCERTAIN;
-      else if(cTheta == penulmax)
-        current_muse = UNCERTAIN;
-      else if(cAlpha == penulmax)
-        current_muse = LOVE;
-      else if(cBeta == penulmax)
-        current_muse = ANXIOUS;
-    }
-    else // ur basically asleep or something weird. black.
-    {
-      current_muse = new Color(240,240,240);
-      // TIRED (or sleeping) // black
-      // if this happens, ur like dead or somethin
-      
-    }
-
-  if(frame % 20 > 10)
-  {
-      current_muse.addGrad();
-  }
-  else
-  {
-    current_muse.subGrad();
   }
 
   //Draw the background muse filling color data
@@ -326,9 +253,8 @@ void draw()
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        balls_buffer.fill(current_muse.r, current_muse.g, current_muse.b); //fully transparent
+        balls_buffer.fill(255-frame%50,frame%60,0,75); //fully transparent
         balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
-        current_muse.addGrad();
     }
     balls_buffer.endDraw();
     
