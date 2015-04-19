@@ -23,10 +23,13 @@ class MuseServer(ServerThread):
         self.acc_y = 0
         self.acc_z = 0
 
+        """
         self.l_ear = 0
         self.l_forehead = 0
         self.r_forehead = 0
         self.r_ear = 0
+        """
+        
 
         # we keep track of the number of times callbacks called 
         # because we don't want ALL of the data because it's too much
@@ -43,6 +46,7 @@ class MuseServer(ServerThread):
         else:
             self.num_updates += 1
 
+    """
     def update_eeg(self, l_e, l_f, r_f, r_e):
         if self.num_updates == update_limit:
             self.l_ear = l_e
@@ -51,13 +55,16 @@ class MuseServer(ServerThread):
             self.r_ear = r_e
         else:
             self.num_updates += 1
+    """
 
     def string_acc(self):
         return str(self.acc_x) + ',' + str(self.acc_y) + ',' + str(self.acc_z)
 
+    """
     def string_eeg(self):
         vals = [self.l_ear, self.l_forehead, self.r_forehead, self.r_ear]
         return ",".join(map(str,vals))
+    """
 
     #receive accelrometer data
     @make_method('/muse/acc', 'fff')
@@ -66,12 +73,14 @@ class MuseServer(ServerThread):
         #print "%s %f %f %f" % (path, acc_x, acc_y, acc_z)
         self.update_acc(acc_x, acc_y, acc_z)
     
+    """
     #receive EEG data
     @make_method('/muse/eeg', 'ffff')
     def eeg_callback(self, path, args):
         l_ear, l_forehead, r_forehead, r_ear = args
         #print "%s %f %f %f %f" % (path, l_ear, l_forehead, r_forehead, r_ear)
         self.update_eeg(l_ear, l_forehead, r_forehead, r_ear)
+    """
     
 
     #handle unexpected messages
