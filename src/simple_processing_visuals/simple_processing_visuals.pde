@@ -42,6 +42,9 @@ public class Color{
     this.r = r;
     this.g = g;
     this.b = b;
+    
+   public void addGrad(){r++;g++;b++;}
+   public void subGrad(){r--;g--;b--;}
    }
 }
 //COLOR CONSTANTS FOR MOODS
@@ -283,7 +286,14 @@ void draw()
       
     }
 
-
+  if(frame % 77 > 32)
+  {
+      current_muse.addGrad();
+  }
+  else
+  {
+    current_muse.subGrad();
+  }
 
   //Draw the background muse filling color data
   pg.beginDraw();
@@ -298,7 +308,7 @@ void draw()
   {
     balls_buffer.beginDraw();
     balls_buffer.fill(104,104,104); //slowly fade out old balls
-    balls_buffer.background(0);
+    balls_buffer.background(20);
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
@@ -308,7 +318,7 @@ void draw()
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        balls_buffer.noStroke();
+        //balls_buffer.noStroke();
         //balls_buffer.fill(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75); //fully transparent
         balls_buffer.fill(255);
         balls_buffer.ellipse(ball.getx(), ball.gety(), rad, rad);
