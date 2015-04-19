@@ -1,6 +1,6 @@
 import beads.*;
 import org.jaudiolibs.beads.*;
-
+/*
 String sF = "test.mp3";
 SamplePlayer sp;
 AudioContext ac;
@@ -128,32 +128,26 @@ void processBackground()
 void draw()
 {
   frame++;
-  background(0,100);
-  //processBackground();
-  //colorWash.add(new Color((int)random(255),(int)random(250),(int)random(250))); //simulating muse data for now
   
-  //Write to the graphics buffer
-
+  //slow down the data so people have a chance to view it
   if(frame % 10 == 0)
   {
      //update the current color
     current_muse = new Color((int)random(255),(int)random(250),(int)random(250));
   }
 
+  //Draw the background muse filling color data
   pg.beginDraw();
   pg.stroke(current_muse.r, current_muse.g, current_muse.b);
   pg.noFill();
   pg.ellipse(width/2,height/2,frame,frame);
   pg.endDraw();
-  image(pg, 0, 0);
   
-  //println(colorWash.size());
-  stroke(color(255, 255, 255));
+  //Draw the rythmn balls
   float[] features = ps.getFeatures();
   if(features != null)
   {
     balls_buffer.beginDraw();
-    balls_buffer.rect(width, height, 0, 0);
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
@@ -163,18 +157,22 @@ void draw()
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        pg.fill(255,255,255);
-        pg.ellipse(ball.getx(), ball.gety(), rad, rad);
+        balls_buffer.fill(0,0,0,255); //fully transparent
+        balls_buffer.ellipse(ball.getx(), ball.gety(), rad, rad);
     }
     balls_buffer.endDraw();
-    //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,DIFFERENCE);
+    
+    background(0);
+    tint(255, 255);
     image(balls_buffer, 0, 0);
+    blendMode(DIFFERENCE);
+    image(pg, 0, 0);
+    //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,SCREEN); 
   }
-  
-  
-  
+
   int dt = millis() - time;
   brightness -= (dt * 0.01);
   if (brightness < 0) brightness = 0;
   time += dt;
 }
+*/
