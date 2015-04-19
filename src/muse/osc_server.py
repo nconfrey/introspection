@@ -5,8 +5,9 @@ import signal
 
 to_visualizer_file = "data"
 portnum = 5001
-update_limit = 100  # number of times callback is called before
+update_limit = 25  # number of times callback is called before
                     # actually updating and returning any info
+sleep_time = .25 #change to write faster
 running = 1
 
 def signal_handler(signal, frame):
@@ -94,17 +95,19 @@ except ServerError, err:
 server.start()
 
 if __name__ == "__main__":
-    f_vis = open(to_visualizer_file, 'w')
+    #f_vis = open(to_visualizer_file, 'w')
 
     while running:
         #signal.signal(signal.SIGINT, signal_handler)
-        time.sleep(1)
+        time.sleep(sleep_time)
         if server.num_updates == update_limit:
             print "writing\n"
+            f_vis = open(to_visualizer_file, 'w')
             f_vis.write(server.string_acc() + ',' + server.string_eeg())
             server.reset_num_updates()
+            f_vis.close()
 
         #TODO: need an interrupt so that we can quit from the server and close the file
 
-    close(f_vis)
+    #close(f_vis)
     sys.exit(0)
