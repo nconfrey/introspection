@@ -85,7 +85,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "werk.wav";
+    sF = sketchPath("") + "horses.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
@@ -184,6 +184,11 @@ void draw()
   frame++;
   background(255*brightness);
   //slow down the data so people have a chance to view it
+  if(frame % 10 == 0)
+  {
+     //update the current color
+    current_muse = new Color((int)random(255),(int)random(250),(int)random(250));
+  }
   
   //values provided from the muse - zeroed out just in case
   float cAccX = 0;
@@ -299,7 +304,7 @@ void draw()
   pg.beginDraw();
   pg.stroke(current_muse.r, current_muse.g, current_muse.b);
   pg.noFill();
-  pg.ellipse((width/2),(height/2),frame,frame);
+  pg.ellipse(width/2,height/2,frame,frame);
   pg.endDraw();
   
   //Draw the rythmn balls
@@ -307,8 +312,10 @@ void draw()
   if(features != null)
   {
     balls_buffer.beginDraw();
-    balls_buffer.fill(104,104,104); //slowly fade out old balls
-    balls_buffer.background(20);
+    balls_buffer.fill(0,0,0,25); //slowly fade out old balls
+    if(frame % 1000 == 0)
+      balls_buffer.fill(0); // allow full clearing every once in a while
+    balls_buffer.rect(0,0,width,height);
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
@@ -318,18 +325,15 @@ void draw()
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        //balls_buffer.noStroke();
-        //balls_buffer.fill(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75); //fully transparent
-        balls_buffer.fill(255);
-        balls_buffer.ellipse(ball.getx(), ball.gety(), rad, rad);
+        balls_buffer.fill(current_muse.r, current_muse.g, current_muse.b); //fully transparent
+        balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
+        current_muse.addGrad();
     }
     balls_buffer.endDraw();
     
-    PImage pi = pg.get();
-    pi.mask(balls_buffer);
-    image(pi, 0, 0);
+    
     //tint(255, 255);
-    //image(balls_buffer, 0, 0);
+    image(balls_buffer, 0, 0);
     //blendMode(DIFFERENCE);
     //image(pg, 0, 0);
     //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,SCREEN); 
