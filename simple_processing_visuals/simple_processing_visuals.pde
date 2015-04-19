@@ -19,7 +19,11 @@ ArrayList ballList;
 PGraphics pg;
 PGraphics balls_buffer;
 
+//Muse variables
+BufferedReader reader;
+String muse_data;
 Color current_muse;
+boolean MUSE_OKAY = true; //just so we can run even without the muse
 
 public class Color{
    public float r, g, b;
@@ -34,6 +38,7 @@ int frame = 0; //used to keep track of numbers of draw loops
 
 void setup()
 {
+  
   size(displayWidth, displayHeight);
   frameRate(30);
   pg = createGraphics(width, height);
@@ -54,7 +59,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "werk.wav";
+    sF = sketchPath("") + "Blow.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
@@ -71,7 +76,7 @@ void setup()
   
   ShortFrameSegmenter sfs = new ShortFrameSegmenter(ac);
   sfs.addInput(ac.out);
-  sfs.setChunkSize(1024);
+  sfs.setChunkSize(2048);
   sfs.setHopSize(441);
   // FFT stands for Fast Fourier Transform
   // all you really need to know about the FFT is that it lets you see what frequencies are present in a sound
@@ -86,8 +91,8 @@ void setup()
   ps.addListener(sd);
   beatDetector = new PeakDetector();
   sd.addListener(beatDetector);
-  beatDetector.setThreshold(0.7f);
-  beatDetector.setAlpha(.2f);
+  beatDetector.setThreshold(0.3f);
+  beatDetector.setAlpha(.8f);
   beatDetector.addMessageListener
   (
     new Bead()
@@ -100,6 +105,10 @@ void setup()
   );
   ac.out.addDependent(sfs); // list the frame segmenter as a dependent, so that the AudioContext knows when to update it  
   
+  //Now prep the data from the muse
+  reader = createReader("data");
+  if(reader == null)
+    MUSE_OKAY = false;
   
   ac.start();
   
@@ -135,6 +144,38 @@ void draw()
      //update the current color
     current_muse = new Color((int)random(255),(int)random(250),(int)random(250));
   }
+  //values provided from the muse - zeroed out just in case
+  float cAccX = 0;
+  float cAccY = 0;
+  float cAccZ = 0;
+  float cL_ear = 0;
+  float cL_forehead = 0;
+  float cR_forehead = 0;
+  float cR_ear = 0;
+  
+  if(MUSE_OKAY)
+  {
+    try
+    {
+      muse_data = reader.readLine();  
+    }
+    catch(Exception e)
+    {
+      muse_data = null;
+      return; //maybe a dangerous assumption, but the show must go on!
+    }
+    if(muse_data != null)
+    {
+       String[] pieces = split(muse_data, TAB);
+       cAccX = float(pieces[0]) / 100;
+       cAccY = float(pieces[1]) / 100;
+       cAccZ = float(pieces[2]) / 100;
+       cL_ear = float(pieces[3]) / 100;
+       cL_forehead = float(pieces[4]) / 100;
+       cR_forehead = float(pieces[5]) / 100;
+       cR_ear = float(pieces[6]) / 100;
+    }
+  }
 
   //Draw the background muse filling color data
   pg.beginDraw();
@@ -158,7 +199,7 @@ void draw()
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
         balls_buffer.fill(255-frame%50,frame%60,0,75); //fully transparent
-        balls_buffer.ellipse(ball.getx(), ball.gety(), rad, rad);
+        balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
     }
     balls_buffer.endDraw();
     
@@ -169,10 +210,10 @@ void draw()
     //image(pg, 0, 0);
     //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,SCREEN); 
   }
-  brightness = 0;
-  //int dt = millis() - time;
-  //brightness -= (dt * 0.01);
-  //if (brightness < 0) brightness = 0;
-  //time += dt;
+  //brightness = 0;
+  int dt = millis() - time;
+  brightness -= (dt * 0.009);
+  if (brightness < 0) brightness = 0;
+  time += dt;
 }
 
