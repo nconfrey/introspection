@@ -23,12 +23,11 @@ class MuseServer(ServerThread):
         self.acc_y = 0
         self.acc_z = 0
 
-        """
-        self.l_ear = 0
-        self.l_forehead = 0
-        self.r_forehead = 0
-        self.r_ear = 0
-        """
+        self.delta = 0
+        self.theta = 0
+        self.alpha = 0
+        self.beta = 0
+        self.gamma = 0
         
 
         # we keep track of the number of times callbacks called 
@@ -46,46 +45,43 @@ class MuseServer(ServerThread):
         else:
             self.num_updates += 1
 
-    """
-    def update_eeg(self, l_e, l_f, r_f, r_e):
+    def  update_waves(self,d,t,a,b,g):
         if self.num_updates == update_limit:
-            self.l_ear = l_e
-            self.l_forehead = l_f
-            self.r_forehead = r_f
-            self.r_ear = r_e
+            self.delta = d
+            self.theta = t
+            self.alpha = a
+            self.beta = b
+            self.gamma = g
         else:
             self.num_updates += 1
-    """
+
 
     def string_acc(self):
         return str(self.acc_x) + ',' + str(self.acc_y) + ',' + str(self.acc_z)
 
-    """
-    def string_eeg(self):
-        vals = [self.l_ear, self.l_forehead, self.r_forehead, self.r_ear]
+    def string_waves(self):
+        vals = [self.delta, self.theta, self.alpha, self.beta, self.gamma]
         return ",".join(map(str,vals))
-    """
+    
 
     #receive accelrometer data
     @make_method('/muse/acc', 'fff')
     def acc_callback(self, path, args):
         acc_x, acc_y, acc_z = args
-        #print "%s %f %f %f" % (path, acc_x, acc_y, acc_z)
         self.update_acc(acc_x, acc_y, acc_z)
     
-    """
-    #receive EEG data
-    @make_method('/muse/eeg', 'ffff')
-    def eeg_callback(self, path, args):
-        l_ear, l_forehead, r_forehead, r_ear = args
-        #print "%s %f %f %f %f" % (path, l_ear, l_forehead, r_forehead, r_ear)
-        self.update_eeg(l_ear, l_forehead, r_forehead, r_ear)
-    """
+    #receive wave data from muse magic black box from EEG
+    @make_method('/muse/elements', 'fffff')
+    def waves_callback(self, path, args):
+        d,t,a,b,g = args
+        print "%s %f %f %f %f %f\n" % (path, d,t,a,b,g)
+        self.update_waves(d,t,a,b,g)
     
 
     #handle unexpected messages
     @make_method(None, None)
     def fallback(self, path, args, types, src):
+        #actually, just do nothing
         """
         print "Unknown message \
 		\n\t Source: '%s' \
@@ -112,7 +108,7 @@ if __name__ == "__main__":
         if server.num_updates == update_limit:
             print "writing\n"
             f_vis = open(to_visualizer_file, 'w')
-            f_vis.write(server.string_acc() + ',' + server.string_eeg() + '\n')
+            f_vis.write(server.string_acc() + ',' + server.string_waves() + '\n')
             server.reset_num_updates()
             f_vis.close()
 
