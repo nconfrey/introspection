@@ -69,7 +69,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "horses.wav";
+    sF = sketchPath("") + "werk.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
@@ -216,7 +216,7 @@ void draw()
     println("muse_data is " + muse_data);
   }
 
-  current_muse = new Color(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75);
+  current_muse = new Color(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255));
 
   //Draw the background muse filling color data
   pg.beginDraw();
