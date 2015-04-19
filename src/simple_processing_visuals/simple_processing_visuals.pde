@@ -17,7 +17,7 @@ ArrayList colorWash;
 ArrayList ballList;
 
 PGraphics pg;
-PGraphics balls_buffer; // emilee: what values does this start with?
+PGraphics balls_buffer;
 
 //Muse variables
 BufferedReader reader;
@@ -29,10 +29,11 @@ boolean MUSE_OKAY = true; //just so we can run even without the muse
 float startAccX = 0;
 float startAccY = 0;
 float startAccZ = 0;
-float startL_ear = 0;
-float startL_forehead = 0;
-float startR_forehead = 0;
-float startR_ear = 0;
+float startDelta = 0;
+float startTheta = 0;
+float startAlpha = 0;
+float startBeta = 0;
+float startGamma = 0;
 
 
 public class Color{
@@ -43,13 +44,25 @@ public class Color{
     this.b = b;
    }
 }
+//COLOR CONSTANTS FOR MOODS
+Color MELLOW = new Color(227,255,13);
+Color CALM = new Color(86,238,254);
+Color LOVE = new Color(255,49,31);
+Color UNCERTAIN = new Color(219,0,219);
+Color FRUSTRATED = new Color(255,165,56);
+Color DEVILISH = new Color(138,0,247);
+Color STRESSED = new Color(70,232,0);
+Color ANGRY = new Color(230,0,0);
+Color TIRED = new Color(238,204,115);
+Color CONTENT = new Color(255,229,63);
+Color CREATIVE = new Color(0,204,51);
 
 int frame = 0; //used to keep track of numbers of draw loops
 
 void setup()
 {
   
-  size(displayWidth, displayHeight);
+  size(displayWidth, displayHeight, P3D);
   frameRate(30);
   pg = createGraphics(width, height);
   balls_buffer = createGraphics(width, height);
@@ -69,7 +82,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "Blow.wav";
+    sF = sketchPath("") + "horses.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
@@ -115,7 +128,6 @@ void setup()
   );
   ac.out.addDependent(sfs); // list the frame segmenter as a dependent, so that the AudioContext knows when to update it  
   
-   // --------------------------- Get information from muse ----------------------------
     try
     {
       muse_data = loadStrings("data.txt");//reader.readLine();  
@@ -131,13 +143,14 @@ void setup()
        startAccX = float(pieces[0]);
        startAccY = float(pieces[1]);
        startAccZ = float(pieces[2]);
-       startL_ear = float(pieces[3]);
-       startL_forehead = float(pieces[4]);
-       startR_forehead = float(pieces[5]);
-       startR_ear = float(pieces[6]);
+       startDelta = float(pieces[3]);
+       startTheta = float(pieces[4]);
+       startAlpha = float(pieces[5]);
+       startBeta = float(pieces[6]);
+       startGamma = float(pieces[7]);
     }
   
-  ac.start(); // audio start
+  ac.start();
   
   gainValue.setValue(1); //Volume: BE CAREFUL DONT PUT PAST 10 IF YOU VALUE YOUR EARS
   sp.setToLoopStart();
@@ -147,7 +160,6 @@ void setup()
   noStroke();
 }
 
-// unused
 void processBackground()
 {
    //PImage ret = createImage(width, height,RGB);
@@ -167,25 +179,22 @@ void processBackground()
 void draw()
 {
   frame++;
-  background(255*brightness); // flash thing
+  background(255*brightness);
   //slow down the data so people have a chance to view it
-  if(frame % 10 == 0)
-  {
-     //update the current color for use without the muse
-    current_muse = new Color((int)random(255),(int)random(250),(int)random(250));
-  }
+  
   //values provided from the muse - zeroed out just in case
-  float cAccX = 0; // c means CURRENT as opposed to initial in setup
+  float cAccX = 0;
   float cAccY = 0;
   float cAccZ = 0;
-  float cL_ear = 0;
-  float cL_forehead = 0;
-  float cR_forehead = 0;
-  float cR_ear = 0;
+  float cDelta = 0;
+  float cTheta = 0;
+  float cAlpha = 0;
+  float cBeta = 0;
+  float cGamma = 0;
   
-  // actually get values from muse
   if(MUSE_OKAY)
   {
+    println("hi");
     try
     {
       muse_data = loadStrings("data.txt");//reader.readLine();  
@@ -199,63 +208,68 @@ void draw()
     {
        try{ 
          String[] pieces = split(muse_data[0], ',');
-         cAccX = float(pieces[0]) - startAccX; // acc is current - the start. still divide by 2? ok.
-         cAccY = (float(pieces[1]) - startAccY)/2;
+         cAccX = float(pieces[0]) - startAccX;
+         cAccY = float(pieces[1]) - startAccY;
          cAccZ = float(pieces[2]) - startAccZ;
-         
-         cL_ear = float(pieces[3]) - startL_ear;
-         cL_forehead = float(pieces[4]) - startL_forehead;
-         cR_forehead = float(pieces[5]) - startR_forehead;
-         cR_ear = float(pieces[6]) - startR_ear;
+         cDelta = float(pieces[3]) - startDelta;
+         cTheta = float(pieces[4]) - startTheta;
+         cAlpha = float(pieces[5]) - startAlpha;
+         cBeta = float(pieces[6]) - startBeta;
+         cGamma = float(pieces[7]) - startGamma;
        }
        catch(Exception e)
        {
          cAccX = startAccX;
          cAccY = startAccY;
          cAccZ = startAccZ;
-         cL_ear = startL_ear;
-         cL_forehead = startL_forehead;
-         cR_forehead = startR_forehead;
-         cR_ear = startR_ear;
+         startDelta = startDelta;
+         startTheta = startTheta;
+         startAlpha = startAlpha;
+         startBeta = startBeta;
+         startGamma = startGamma;
        }
     }
     println("accx " + cAccX + " accy is " + cAccY);
     println("muse_data is " + muse_data);
   }
 
-  //Draw the background muse filling color data // pg is depreciated rn. pg is a pgraphics thing
-  // allows for writing to buffer before displaying
+  current_muse = new Color(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255));
+
+  //Draw the background muse filling color data
   pg.beginDraw();
   pg.stroke(current_muse.r, current_muse.g, current_muse.b);
   pg.noFill();
-  pg.ellipse(width/2,height/2,frame,frame);
+  pg.ellipse((width/2),(height/2),frame,frame);
   pg.endDraw();
   
   //Draw the rythmn balls
-  float[] features = ps.getFeatures(); // array of freq values from audio for radius of balls
+  float[] features = ps.getFeatures();
   if(features != null)
   {
     balls_buffer.beginDraw();
-    balls_buffer.fill(0,0,0,4.5); //slowly fade out old balls // emilee: how does fill behave?
-    balls_buffer.rect(-width, -height,(2*width),(2*height));
+    balls_buffer.fill(104,104,104); //slowly fade out old balls
+    balls_buffer.background(0);
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
-        // emilee: ball buffer is a pgraphic
+        
         int featureIndex = i + features.length / 35;
         int rad = ball.getPrevRad();
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        balls_buffer.stroke(0,55);
-        balls_buffer.fill(map(cL_ear,0,1500,255,100),map(cL_forehead,0,1500,180,100),map(cR_forehead,0,1500,100,0),75); //dont leave 75
-        balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
+        balls_buffer.noStroke();
+        //balls_buffer.fill(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75); //fully transparent
+        balls_buffer.fill(255);
+        balls_buffer.ellipse(ball.getx(), ball.gety(), rad, rad);
     }
     balls_buffer.endDraw();
     
-    
+    PImage pi = pg.get();
+    pi.mask(balls_buffer);
+    image(pi, 0, 0);
     //tint(255, 255);
-    image(balls_buffer, 0, 0);
+    //image(balls_buffer, 0, 0);
     //blendMode(DIFFERENCE);
     //image(pg, 0, 0);
     //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,SCREEN); 
