@@ -25,6 +25,16 @@ String[] muse_data;
 Color current_muse;
 boolean MUSE_OKAY = true; //just so we can run even without the muse
 
+//set some calibration values
+float startAccX = 0;
+float startAccY = 0;
+float startAccZ = 0;
+float startL_ear = 0;
+float startL_forehead = 0;
+float startR_forehead = 0;
+float startR_ear = 0;
+
+
 public class Color{
    public float r, g, b;
    public Color(float r, float g, float b){
@@ -105,12 +115,27 @@ void setup()
   );
   ac.out.addDependent(sfs); // list the frame segmenter as a dependent, so that the AudioContext knows when to update it  
   
-  /*
-  //Now prep the data from the muse
-  reader = createReader(sketchPath("") + "data.txt");
-  if(reader == null)
-    MUSE_OKAY = false;
-  */
+    try
+    {
+      muse_data = loadStrings("data.txt");//reader.readLine();  
+    }
+    catch(Exception e)
+    {
+      muse_data = null;
+      return; //maybe a dangerous assumption, but the show must go on!
+    }
+    if(muse_data != null)
+    {
+       String[] pieces = split(muse_data[0], ',');
+       startAccX = float(pieces[0]);
+       startAccY = float(pieces[1]);
+       startAccZ = float(pieces[2]);
+       startL_ear = float(pieces[3]);
+       startL_forehead = float(pieces[4]);
+       startR_forehead = float(pieces[5]);
+       startR_ear = float(pieces[6]);
+    }
+  
   ac.start();
   
   gainValue.setValue(1); //Volume: BE CAREFUL DONT PUT PAST 10 IF YOU VALUE YOUR EARS
@@ -134,6 +159,8 @@ void processBackground()
   
   //return ret;
 }
+
+//==========================================Draw Loop=======================================
 
 void draw()
 {
@@ -168,14 +195,26 @@ void draw()
     }
     if(muse_data != null)
     {
-       String[] pieces = split(muse_data[0], ',');
-       cAccX = float(pieces[0])-600;
-       cAccY = float(pieces[1])-700;
-       cAccZ = float(pieces[2]) / 3;
-       cL_ear = float(pieces[3]) / 3;
-       cL_forehead = float(pieces[4]) / 3;
-       cR_forehead = float(pieces[5]) / 3;
-       cR_ear = float(pieces[6]) / 3;
+       try{ 
+         String[] pieces = split(muse_data[0], ',');
+         cAccX = float(pieces[0]) - startAccX;
+         cAccY = float(pieces[1]) - startAccY;
+         cAccZ = float(pieces[2]) - startAccZ;
+         cL_ear = float(pieces[3]) - startL_ear;
+         cL_forehead = float(pieces[4]) - startL_forehead;
+         cR_forehead = float(pieces[5]) - startR_forehead;
+         cR_ear = float(pieces[6]) - startR_ear;
+       }
+       catch(Exception e)
+       {
+         cAccX = startAccX;
+         cAccY = startAccY;
+         cAccZ = startAccZ;
+         cL_ear = startL_ear;
+         cL_forehead = startL_forehead;
+         cR_forehead = startR_forehead;
+         cR_ear = startR_ear;
+       }
     }
     println("accx " + cAccX + " accy is " + cAccY);
     println("muse_data is " + muse_data);
@@ -193,7 +232,7 @@ void draw()
   if(features != null)
   {
     balls_buffer.beginDraw();
-    balls_buffer.fill(0,0,0,56); //slowly fade out old balls
+    balls_buffer.fill(0,0,0,4.5); //slowly fade out old balls
     balls_buffer.rect(0,0,width,height);
     for(int i = 0; i < ballList.size(); i++)
     {
@@ -204,7 +243,8 @@ void draw()
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        balls_buffer.fill(255-frame%50,frame%60,0,75); //fully transparent
+        balls_buffer.noStroke();
+        balls_buffer.fill(255-(int)random(50),(int)random(255),0,75); //fully transparent
         balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
     }
     balls_buffer.endDraw();
