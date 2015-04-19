@@ -60,3 +60,6 @@ target/
 
 # osx tmp files
 *~
+
+#datafile
+data
