@@ -69,7 +69,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-    sF = sketchPath("") + "Blow.wav";
+    sF = sketchPath("") + "horses.wav";
     sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)
@@ -233,7 +233,7 @@ void draw()
   {
     balls_buffer.beginDraw();
     balls_buffer.fill(0,0,0,4.5); //slowly fade out old balls
-    balls_buffer.rect(0,0,width,height);
+    balls_buffer.rect(-width, -height,(2*width),(2*height));
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
@@ -244,7 +244,7 @@ void draw()
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
         balls_buffer.noStroke();
-        balls_buffer.fill(255-(int)random(50),(int)random(255),0,75); //fully transparent
+        balls_buffer.fill(map(cL_ear,0,1500,0,255),map(cL_forehead,0,1500,0,255),map(cR_forehead,0,1500,0,255),75); //fully transparent
         balls_buffer.ellipse(ball.getx() + cAccX, ball.gety() + cAccY, rad, rad);
     }
     balls_buffer.endDraw();
@@ -262,4 +262,3 @@ void draw()
   if (brightness < 0) brightness = 0;
   time += dt;
 }
-
