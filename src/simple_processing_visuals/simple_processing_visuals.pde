@@ -281,7 +281,7 @@ void draw()
     }
     else // ur basically asleep or something weird. black.
     {
-      current_muse = new Color(255,255,255);
+      current_muse = new Color(240,240,240);
       // TIRED (or sleeping) // black
       // if this happens, ur like dead or somethin
       
