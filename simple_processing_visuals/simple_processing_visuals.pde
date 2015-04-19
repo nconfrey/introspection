@@ -1,6 +1,6 @@
 import beads.*;
 import org.jaudiolibs.beads.*;
-
+/*
 String sF = "test.mp3";
 SamplePlayer sp;
 AudioContext ac;
@@ -127,8 +127,8 @@ void processBackground()
 
 void draw()
 {
-  frame++;
   background(0,100);
+  frame++;
   //processBackground();
   //colorWash.add(new Color((int)random(255),(int)random(250),(int)random(250))); //simulating muse data for now
   
@@ -153,7 +153,6 @@ void draw()
   if(features != null)
   {
     balls_buffer.beginDraw();
-    balls_buffer.rect(width, height, 0, 0);
     for(int i = 0; i < ballList.size(); i++)
     {
         Ball ball = (Ball) ballList.get(i);
@@ -163,18 +162,17 @@ void draw()
         int new_rad = (int)(Math.min(features[featureIndex], 400));
         rad = abs(rad - new_rad);
         ball.setPrevRad(rad);
-        pg.fill(255,255,255);
+        //pg.fill(255,255,255);
         pg.ellipse(ball.getx(), ball.gety(), rad, rad);
     }
     balls_buffer.endDraw();
-    //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,DIFFERENCE);
     image(balls_buffer, 0, 0);
+    //blend(balls_buffer, 0, 0, width, height, 0,0,width,height,SCREEN); 
   }
-  
-  
-  
+
   int dt = millis() - time;
   brightness -= (dt * 0.01);
   if (brightness < 0) brightness = 0;
   time += dt;
 }
+*/
