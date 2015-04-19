@@ -21,7 +21,7 @@ PGraphics balls_buffer;
 
 //Muse variables
 BufferedReader reader;
-String muse_data;
+String[] muse_data;
 Color current_muse;
 boolean MUSE_OKAY = true; //just so we can run even without the muse
 
@@ -105,11 +105,12 @@ void setup()
   );
   ac.out.addDependent(sfs); // list the frame segmenter as a dependent, so that the AudioContext knows when to update it  
   
+  /*
   //Now prep the data from the muse
   reader = createReader(sketchPath("") + "data.txt");
   if(reader == null)
     MUSE_OKAY = false;
-  
+  */
   ac.start();
   
   gainValue.setValue(1); //Volume: BE CAREFUL DONT PUT PAST 10 IF YOU VALUE YOUR EARS
@@ -158,7 +159,7 @@ void draw()
     println("hi");
     try
     {
-      muse_data = reader.readLine();  
+      muse_data = loadStrings("data.txt");//reader.readLine();  
     }
     catch(Exception e)
     {
@@ -167,14 +168,14 @@ void draw()
     }
     if(muse_data != null)
     {
-       String[] pieces = split(muse_data, ',');
-       cAccX = float(pieces[0]);
-       cAccY = float(pieces[1]);
-       cAccZ = float(pieces[2]);
-       cL_ear = float(pieces[3]);
-       cL_forehead = float(pieces[4]);
-       cR_forehead = float(pieces[5]);
-       cR_ear = float(pieces[6]);
+       String[] pieces = split(muse_data[0], ',');
+       cAccX = float(pieces[0])-600;
+       cAccY = float(pieces[1])-500 ;
+       cAccZ = float(pieces[2]) / 3;
+       cL_ear = float(pieces[3]) / 3;
+       cL_forehead = float(pieces[4]) / 3;
+       cR_forehead = float(pieces[5]) / 3;
+       cR_ear = float(pieces[6]) / 3;
     }
     println("accx " + cAccX + " accy is " + cAccY);
     println("muse_data is " + muse_data);
