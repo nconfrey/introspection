@@ -1,7 +1,10 @@
 import beads.*;
 import org.jaudiolibs.beads.*;
 
-String sF = "test.mp3";
+import beads.*;
+import org.jaudiolibs.beads.*;
+
+String sF = "../Lift.wav";
 SamplePlayer sp;
 AudioContext ac;
 Gain g;
@@ -68,7 +71,7 @@ void setup()
   //set up the sound file
   ac = new AudioContext();
   try{
-     sF = sketchPath("") + "horses.wav";
+     sF = sketchPath("") + "Lift.wav";
      sp = new SamplePlayer(ac, new Sample(sF));
   }
   catch(Exception e)

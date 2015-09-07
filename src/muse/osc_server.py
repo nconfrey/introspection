@@ -3,7 +3,8 @@ import sys
 import time
 import signal
 
-to_visualizer_file = "src/simple_processing_visuals/data.txt"
+#to_visualizer_file = "src/simple_processing_visuals/data.txt"
+to_visualizer_file = "../simple_processing_visuals/data.txt"
 portnum = 5001
 update_limit = 5  # number of times callback is called before
                     # actually updating and returning any info
